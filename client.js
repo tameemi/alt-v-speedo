@@ -44,3 +44,11 @@ alt.onServer("playerLeftVehicle", (seat) => {
         }
     }
 })
+
+alt.onServer("playerChangedVehicleSeat", (seat) => {
+    if (seat == 1){ //driver
+        if (!speedoShown){
+          view.emit('showSpeedo', true);
+        }
+    }
+})
