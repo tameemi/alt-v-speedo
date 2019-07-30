@@ -1,24 +1,20 @@
-import alt from 'alt';
+import * as alt from 'alt';
 
 let view = new alt.WebView("http://resources/speedo/html/index.html");
 
-let localPlayer = alt.getLocalPlayer();
+let localPlayer = alt.Player.local;
 let speedoShown = false;
 
+let playerVehicle = false;
 
 
 
-alt.on('update', () => {
-    if(!localPlayer){
-        localPlayer = alt.getLocalPlayer();
+alt.setInterval(() => {
+    if (!playerVehicle) return;
+    if (speedoShown) {
+        view.emit('drawSpeedo', playerVehicle.speed, playerVehicle.gear, playerVehicle.rpm)
     }
-    let veh = localPlayer.vehicle;
-    if (veh !== null && speedoShown){
-        view.emit('drawSpeedo', Math.ceil(veh.speed*2.236936), veh.gear, veh.rpm)
-    }
-
-  });
-
+}, 1);
 
 view.on('speedoLoaded', () => {
     speedoShown = true;
@@ -29,26 +25,29 @@ view.on('speedoUnloaded', () => {
 })
 
 
-alt.onServer("playerEnterVehicle", (seat) => {
-    if (seat == 1){ //driver
-        if (!speedoShown){
-          view.emit('showSpeedo', true);
+alt.onServer("playerEnterVehicle", (vehicle, seat) => {
+    playerVehicle = vehicle;
+    if (seat == 1) { //driver
+        if (!speedoShown) {
+            view.emit('showSpeedo', true);
         }
     }
 })
 
 alt.onServer("playerLeftVehicle", (seat) => {
-    if (seat == 1){ //driver
-        if (speedoShown){
-          view.emit('showSpeedo', false);
+    playerVehicle = false;
+    if (seat == 1) { //driver
+        if (speedoShown) {
+            view.emit('showSpeedo', false);
         }
     }
 })
 
-alt.onServer("playerChangedVehicleSeat", (seat) => {
-    if (seat == 1){ //driver
-        if (!speedoShown){
-          view.emit('showSpeedo', true);
+alt.onServer("playerChangedVehicleSeat", (vehicle, seat) => {
+    playerVehicle = vehicle;
+    if (seat == 1) { //driver
+        if (!speedoShown) {
+            view.emit('showSpeedo', true);
         }
     }
 })

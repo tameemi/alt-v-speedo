@@ -5,7 +5,6 @@ var topSpeed = 110; // =+ 10
 
 
 
-// var is faster than let ;) https://jsperf.com/let-vs-var-performance/50
 var c = document.getElementById("canvas");
 c.width = 800;
 c.height = 800;
@@ -81,11 +80,11 @@ function calculateRPMAngel(x, a, b) {
 	return radian >= -0.46153862656807704 ? radian : -0.46153862656807704;
 }
 
-function drawSpeedo(speed, gear, rpm, topSpeed) {
+function drawSpeedo(speed, gear, rpm) {
 	if (speed == undefined) {
 		return false;
 	} else {
-		speed = Math.floor(speed);
+		speed = Math.floor(speed * 2.236936); // to mph
 		rpm = rpm * 10;
 	}
 
@@ -204,26 +203,16 @@ function drawSpeedo(speed, gear, rpm, topSpeed) {
 }
 
 alt.on('drawSpeedo', (spd, gear, rpm) => {
-	drawSpeedo(spd,gear,rpm, topSpeed);
+	drawSpeedo(spd, gear, rpm);
 });
 
 alt.on('showSpeedo', toggle => {
 	let speedo = document.getElementById('canvas');
-	if (toggle){
-		console.log('speedo show');
+	if (toggle) {
 		alt.emit('speedoLoaded');
 		speedo.className = "show";
 	} else {
-		console.log('speedo hide');
 		alt.emit('speedoUnloaded');
 		speedo.className = "hidden";
 	}
 })
-
-function loaded() {
-	// console.log('render');
-	// setTimeout(() => {
-	// 	drawSpeedo(20, 1, 1, topSpeed) ;
-	// }, 100)
-
-}
