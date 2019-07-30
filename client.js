@@ -2,7 +2,6 @@ import * as alt from 'alt';
 
 let view = new alt.WebView("http://resources/speedo/html/index.html");
 
-let localPlayer = alt.Player.local;
 let speedoShown = false;
 
 let playerVehicle = false;
